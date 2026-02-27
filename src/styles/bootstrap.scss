@@ -1,0 +1,14 @@
+// Disable Bootstrap reboot
+$enable-reboot: false;
+
+// Import only what you need
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+
+// Import modal only (and dependencies)
+@import "bootstrap/scss/root";
+@import "bootstrap/scss/transitions";
+@import "bootstrap/scss/modal";
+@import "bootstrap/scss/buttons";
