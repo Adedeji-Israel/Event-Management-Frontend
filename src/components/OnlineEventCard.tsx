@@ -10,7 +10,7 @@ interface OnlineEventCardProps {
   image: string;
   title: string;
   date: string;
-  organizer: User;
+  organizer: string | User 
 }
 
 const OnlineEventCard = ({ image, title, date, organizer, id }: OnlineEventCardProps) => {
