@@ -3,8 +3,28 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
+import type { User } from "@/types/user";
 
-const EventCard = ({ image, title, date, organizer, id }) => {
+interface EventCardProps {
+  id: string | number;
+  image: string;
+  title: string;
+  date: string;
+  organizer: string | User;
+}
+
+const EventCard = ({
+  id,
+  image,
+  title,
+  date,
+  organizer,
+}: EventCardProps) => {
+  const organizerName =
+    typeof organizer === "string"
+      ? organizer
+      : organizer.fullName;
+
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
@@ -12,19 +32,24 @@ const EventCard = ({ image, title, date, organizer, id }) => {
       className="w-full max-w-sm"
     >
       <Card className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition h-full flex flex-col">
-
-        {/* Image */}
         <div className="relative w-full overflow-hidden">
           <Link to={`/events/${id}`}>
-            <img src={image} alt={title} className="w-full h-48 object-cover" loading="lazy" decoding="async" />
+            <img
+              src={image}
+              alt={title}
+              className="w-full h-48 object-cover"
+              loading="lazy"
+              decoding="async"
+            />
           </Link>
         </div>
 
-        {/* Content */}
         <CardContent className="space-y-7 flex-grow">
           <div>
             <Link to={`/events/${id}`}>
-              <h3 className="text-xl font-bold leading-snug hover:text-[#2F2F89] transition">{title}</h3>
+              <h3 className="text-xl font-bold leading-snug hover:text-[#2F2F89] transition">
+                {title}
+              </h3>
             </Link>
           </div>
 
@@ -34,21 +59,24 @@ const EventCard = ({ image, title, date, organizer, id }) => {
           </div>
         </CardContent>
 
-        {/* Footer */}
         <CardFooter className="pb-6 flex items-center justify-between">
           <div>
             <p className="text-md">Organized By</p>
-            <span className="text-lg text-[#FE2676] font-semibold">{organizer?.fullName}</span>
+            <span className="text-lg text-[#FE2676] font-semibold">
+              {organizerName}
+            </span>
           </div>
-          <div>
-            <Button asChild variant="ghost" className="text-[#36358F] text-lg rounded-sm border-2 border-[#36358F] hover:text-white hover:bg-[#36358F] transition-colors duration-600 !px-4 !py-5">
-              <Link to={`/events/${id}/book-ticket`} className="flex items-center gap-3">
-                BUY NOW
-              </Link>
-            </Button>
-          </div>
-        </CardFooter>
 
+          <Button
+            asChild
+            variant="ghost"
+            className="text-[#36358F] text-lg rounded-sm border-2 border-[#36358F] hover:text-white hover:bg-[#36358F]"
+          >
+            <Link to={`/events/${id}/book-ticket`}>
+              BUY NOW
+            </Link>
+          </Button>
+        </CardFooter>
       </Card>
     </motion.div>
   );

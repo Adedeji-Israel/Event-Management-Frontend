@@ -3,8 +3,21 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
+import type { User } from "@/types/user";
 
-const OnlineEventCard = ({ image, title, date, organizer, id }) => {
+interface OnlineEventCardProps {
+  id: string;
+  image: string;
+  title: string;
+  date: string;
+  organizer: User;
+}
+
+const OnlineEventCard = ({ image, title, date, organizer, id }: OnlineEventCardProps) => {
+  const organizerName =
+    typeof organizer === "string"
+      ? organizer
+      : organizer.fullName;
     return (
         <motion.div
             whileHover={{ scale: 1.02 }}
@@ -49,7 +62,7 @@ const OnlineEventCard = ({ image, title, date, organizer, id }) => {
                         <div>
                             <p className="text-md">Organized By</p>
                             <span className="text-lg text-[#FE2676] font-semibold">
-                                {organizer?.fullName}
+                                {organizerName}
                             </span>
                         </div>
 

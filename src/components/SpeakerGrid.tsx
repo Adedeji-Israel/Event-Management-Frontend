@@ -1,5 +1,3 @@
-// import React from 'react'
-// import SpeakerCard from "@/components/SpeakerCard"
 import SpeakerCard from "@/components/SpeakerCard"
 
 import ImageOne from "@/assets/images/speaker_1.jpg"

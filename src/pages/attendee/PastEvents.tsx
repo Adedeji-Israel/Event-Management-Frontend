@@ -1,19 +1,8 @@
+import type { Ticket } from "@/types/ticket";
 import { useEffect, useState } from "react";
 import api from "@/lib/AxiosInterceptor";
 import TicketCard from "@/components/events/TicketCard";
 
-interface Ticket {
-  _id: string;
-  event?: {
-    _id: string;
-    title: string;
-    date: string;
-    location?: string;
-  };
-  quantity: number;
-  amount: number;
-  status: string;
-}
 
 const PastEvents = () => {
   const [loading, setLoading] = useState(false);

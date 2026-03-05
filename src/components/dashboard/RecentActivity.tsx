@@ -29,7 +29,7 @@ const timeAgo = (date: string) => {
   return `${days}d ago`;
 };
 
-const RecentActivity = ({ events = [], tickets = [], users = [] }: Props) => {
+const RecentActivity = ({ events = [] }: Props) => {
   const activities: Activity[] = [
     ...events.slice(0, 3).map((event) => ({
       id: `event-${event._id}`,
@@ -37,18 +37,6 @@ const RecentActivity = ({ events = [], tickets = [], users = [] }: Props) => {
       message: `Event "${event.title}" was created`,
       time: timeAgo(event.createdAt || event.date),
     })),
-    // ...tickets.slice(0, 3).map((ticket) => ({
-    //   id: `ticket-${ticket._id}`,
-    //   type: "ticket" as const,
-    //   message: `${ticket.ticketCount} ticket(s) booked for ${ticket.event?.title}`,
-    //   time: timeAgo(ticket.createdAt),
-    // })),
-    // ...users.slice(0, 2).map((user) => ({
-    //   id: `user-${user._id}`,
-    //   type: "user" as const,
-    //   message: `New user "${user.name}" registered`,
-    //   time: timeAgo(user.createdAt),
-    // })),
   ].slice(0, 3);
 
   return (

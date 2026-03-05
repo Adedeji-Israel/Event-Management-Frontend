@@ -1,3 +1,4 @@
+import type { Event } from "@/types/event";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "@/lib/AxiosInterceptor";
@@ -13,21 +14,6 @@ interface SelectedTicket {
     quantity: number;
 }
 
-interface TicketType {
-    _id: string;
-    name: string;
-    price: number;
-}
-
-interface EventType {
-    _id: string;
-    title: string;
-    date: string;
-    time: string;
-    location: string;
-    ticketTypes: TicketType[];
-}
-
 interface Attendee {
     ticketTypeId: string;
     ticketName: string;
@@ -40,7 +26,7 @@ const CheckoutPageTwo = () => {
     const navigate = useNavigate();
     const { user } = useAuth(); 
     
-    const [event, setEvent] = useState<EventType | null>(null);
+    const [event, setEvent] = useState<Event | null>(null);
     const [selectedTickets, setSelectedTickets] = useState<SelectedTicket[]>([]);
     const [billing, setBilling] = useState({
         fullName: "",
@@ -93,6 +79,7 @@ const CheckoutPageTwo = () => {
             );
 
             if (!type) return;
+            if (!type._id) return;
 
             for (let i = 1; i <= ticket.quantity; i++) {
                 generated.push({

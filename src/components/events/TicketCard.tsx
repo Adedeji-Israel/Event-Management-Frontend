@@ -1,7 +1,10 @@
+import type { Ticket } from "@/types/ticket";
+
 interface TicketCardProps {
     ticket: Ticket;
     isPast?: boolean;
 }
+
 const TicketCard = ({ ticket, isPast = false }: TicketCardProps) => {
 
     const getDaysDifference = (eventDate: string) => {
@@ -34,8 +37,8 @@ const TicketCard = ({ ticket, isPast = false }: TicketCardProps) => {
                 {ticket.event?.date && (
                     <p
                         className={`text-xs font-medium mt-1 ${isPast
-                                ? "text-gray-400"
-                                : "text-green-600"
+                            ? "text-gray-400"
+                            : "text-green-600"
                             }`}
                     >
                         {isPast
@@ -52,7 +55,7 @@ const TicketCard = ({ ticket, isPast = false }: TicketCardProps) => {
                     {ticket.totalQuantity} ticket(s)
                 </p>
                 <p className="text-sm font-semibold">
-                    ₦{ticket.amount?.toLocaleString()}
+                    ₦{(ticket.amount ?? 0).toLocaleString()}
                 </p>
             </div>
         </div>

@@ -10,6 +10,14 @@ import {
   BarChart3,
   Users,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+export interface NavItem {
+  name: string;
+  to: string;
+  icon: LucideIcon;
+  end?: boolean;
+}
 
 /* ================= ADMIN ================= */
 export const adminLinks = [
@@ -42,9 +50,16 @@ export const attendeeLinks = [
   { name: "Calendar", to: "/dashboard/attendee/calendar", icon: Calendar },
 ];
 
-/* ================= ROLE MAP ================= */
-export const roleLinks = {
-  admin: adminLinks,
-  organizer: organizerLinks,
-  attendee: attendeeLinks,
+export type SidebarRole = "admin" | "organizer" | "attendee";
+
+export const roleLinks: Record<SidebarRole, NavItem[]> = {
+  admin: [
+    { name: "Dashboard", to: "/dashboard/admin", icon: LayoutDashboard, end: true },
+  ],
+  organizer: [
+    { name: "My Events", to: "/dashboard/organizer/events", icon: Calendar },
+  ],
+  attendee: [
+    { name: "My Tickets", to: "/dashboard/attendee/tickets", icon: Ticket },
+  ],
 };

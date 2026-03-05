@@ -1,16 +1,9 @@
 // src/Context/AuthContext.tsx
-import { createContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "@/lib/AxiosInterceptor";
+import type { User } from "@/types/user";
 
-interface User {
-  _id: string;
-  userName: string;
-  fullName: string;
-  email: string;
-  role: "admin" | "organizer" | "user";
-  profilePicture?: string;
-}
 
 interface AuthContextType {
   user: User | null;

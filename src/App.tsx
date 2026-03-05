@@ -57,7 +57,7 @@ function App() {
             <Route path="admin" element={<DashboardHome />} />
             <Route path="admin/events" element={<AdminEvents />} />
             <Route path="events/:eventId" element={<SingleEvent />} />
-          </Route>
+          </Route> 
 
           {/* ORGANIZER */}
           <Route element={<ProtectedRoute allowedRoles={["organizer"]} />}>

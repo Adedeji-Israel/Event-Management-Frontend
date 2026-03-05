@@ -1,3 +1,4 @@
+import type { Event } from "@/types/event";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "@/lib/AxiosInterceptor";
@@ -7,25 +8,6 @@ import EventsFilterBar from "@/components/events/EventsFilterBar";
 import EventCard from "@/components/events/EventCard";
 import EventsRightPanel from "@/components/events/EventsRightPanel";
 
-interface TicketType {
-    name: "VIP" | "Regular" | "Early Bird";
-    price: number;
-    quantity: number;
-    sold: number;
-}
-
-interface Event {
-    _id: string;
-    title: string;
-    description: string;
-    date: string;
-    time: string;
-    location: string;
-    image: string;
-    status: "draft" | "live" | "ended";
-    ticketTypes: TicketType[];
-    createdAt: string;
-}
 
 const AdminEvents = () => {
     const { user, loading: authLoading } = useAuth();
@@ -94,16 +76,7 @@ const AdminEvents = () => {
                         return (
                             <EventCard
                                 key={event._id}
-                                _id={event._id}
-                                title={event.title}
-                                date={new Date(event.date).toLocaleDateString()}
-                                location={event.location}
-                                image={event.image}
-                                price={
-                                    event.ticketTypes.length > 0
-                                        ? `₦${Math.min(...event.ticketTypes.map(t => t.price)).toLocaleString()}`
-                                        : "Free"
-                                }
+                                event={event}
                                 onClick={() =>
                                     navigate(`/dashboard/events/${event._id}`)
                                 }

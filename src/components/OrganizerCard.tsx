@@ -2,11 +2,19 @@ import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { CalendarDays, MapPin } from "lucide-react"
 
-const OrganizerCard = ({ image, title, event, location, id }) => {
+interface OrganizerCardProps {
+    id: number;
+    image: string;
+    title: string;
+    event: string;
+    location: string
+}
+
+const OrganizerCard = ({ image, title, event, location, id }: OrganizerCardProps) => {
     return (
         <Card className="w-full h-full rounded-xl shadow-sm hover:shadow-md transition">
             <div className="flex flex-row items-center px-3 py-4 sm:px-4 sm:py-5">
-                
+
                 {/* Left Image Column */}
                 <Link
                     to={`/event-organizers/${id}`}

@@ -1,14 +1,14 @@
+import type { Event } from "@/types/event";
 import { useState, useEffect } from "react";
 import OnlineEventCard from "@/components/OnlineEventCard";
 import api from "@/lib/AxiosInterceptor";
 
 
-const OnlineEventsGrid = ({ showAll = false }) => {
+const OnlineEventsGrid = ({ showAll = false }) => { 
 
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
 
   useEffect(() => {
     const fetchEvents = async () => {

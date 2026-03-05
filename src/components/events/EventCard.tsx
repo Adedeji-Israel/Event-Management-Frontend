@@ -1,25 +1,18 @@
+import type { Event } from "@/types/event";
 import React from "react";
 
 interface EventCardProps {
-  _id: string;
-  title: string;
-  date: string;
-  location?: string;
-  price?: string;
-  image?: string;
+  event: Event;
   onClick?: () => void;
 }
 
-const EventCard: React.FC<EventCardProps> = ({
-  _id,
-  title,
-  date,
-  location,
-  price,
-  image,
-  onClick,
-}) => {
+const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
   const clickable = Boolean(onClick);
+
+  const minPrice =
+    event.ticketTypes.length > 0
+      ? Math.min(...event.ticketTypes.map((t) => t.price))
+      : null;
 
   return (
     <article
@@ -39,11 +32,11 @@ const EventCard: React.FC<EventCardProps> = ({
           : ""
       }`}
     >
-      {image && (
+      {event.image && (
         <div className="w-full h-40 bg-gray-200 rounded-lg overflow-hidden mb-3">
           <img
-            src={image}
-            alt={title || _id}
+            src={event.image}
+            alt={event.title || event._id}
             className="w-full h-full object-cover"
             loading="lazy"
           />
@@ -51,20 +44,25 @@ const EventCard: React.FC<EventCardProps> = ({
       )}
 
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold leading-tight">{title}</h2>
+        <h2 className="text-lg font-semibold leading-tight">
+          {event.title}
+        </h2>
 
-        <p className="text-sm text-gray-500">{date}</p>
+        <p className="text-sm text-gray-500">
+          {new Date(event.date).toLocaleDateString()}
+        </p>
 
-        {location && (
-          <p className="text-sm text-gray-500">{location}</p>
-        )}
-
-        {price && (
-          <p className="text-sm font-medium text-gray-900">
-            {price}
+        {event.location && (
+          <p className="text-sm text-gray-500">
+            {event.location}
           </p>
         )}
 
+        {minPrice !== null && (
+          <p className="text-sm font-medium text-gray-900">
+            ₦{minPrice.toLocaleString()}
+          </p>
+        )}
       </div>
     </article>
   );

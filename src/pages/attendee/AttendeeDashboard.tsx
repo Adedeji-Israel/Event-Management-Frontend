@@ -1,3 +1,4 @@
+import type { Ticket } from "@/types/ticket";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "@/lib/AxiosInterceptor";
@@ -9,21 +10,9 @@ import {
   CreditCard,
 } from "lucide-react";
 
-interface TicketBooking {
-  _id: string;
-  event?: {
-    _id: string;
-    title: string;
-    date: string;
-    price?: number;
-  };
-  quantity: number;
-  amount: number;
-}
 
 const AttendeeDashboard = () => {
-
-  const [bookings, setBookings] = useState<TicketBooking[]>([]);
+  const [bookings, setBookings] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 

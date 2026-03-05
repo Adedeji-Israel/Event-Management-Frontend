@@ -1,9 +1,18 @@
 import { Link } from "react-router-dom";
+import type { ReactNode } from "react";
 
-const CategoryCard = ({ id, name, events, icon, color }) => {
+interface CategoryCardProps {
+  id: string | number;
+  name: string;
+  events: number;
+  icon: ReactNode;
+  color: string;
+}
+
+const CategoryCard = ({ id, name, events, icon, color }: CategoryCardProps) => {
   return (
     <div className="bg-[#FDFCFB] shadow-md rounded-xl flex flex-col items-center justify-between py-6 space-y-5 hover:shadow-lg transition">
-      
+
       {/* Icon Circle */}
       <div className={`w-16 h-16 flex items-center justify-center rounded-full text-white text-2xl ${color}`}>
         {icon}

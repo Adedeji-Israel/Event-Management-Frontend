@@ -1,10 +1,6 @@
 import { useState } from "react";
 import api from "@/lib/AxiosInterceptor";
-
-interface TicketType {
-  name: string;
-  price: number;
-}
+import type { TicketType } from "@/types/event";
 
 interface Props {
   event: {
@@ -16,24 +12,22 @@ interface Props {
 }
 
 const BookingModal = ({ event, onClose }: Props) => {
-  const [quantity, setQuantity] = useState(1);
-  const [selectedTypeIndex, setSelectedTypeIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [selectedTypeIndex, setSelectedTypeIndex] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const selectedTicket = event.ticketTypes[selectedTypeIndex];
 
-  const total = (selectedTicket?.price || 0) * quantity;
+  const total = (selectedTicket?.price ?? 0) * quantity;
 
   const handleBooking = async () => {
-    const eventId = event._id;
+    if (!selectedTicket) return;
 
     try {
       setLoading(true);
-      
-      console.log("eventId: ", eventId);
 
-      await api.post(`/tickets/book/${eventId}`, {
-        eventId: eventId,
+      await api.post(`/tickets/book/${event._id}`, {
+        eventId: event._id,
         ticketType: selectedTicket.name,
         quantity,
         totalAmount: total,
@@ -52,11 +46,8 @@ const BookingModal = ({ event, onClose }: Props) => {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white w-96 p-6 rounded-2xl space-y-5 shadow-lg">
-        <h3 className="text-lg font-bold">
-          Book: {event.title}
-        </h3>
+        <h3 className="text-lg font-bold">Book: {event.title}</h3>
 
-        {/* Ticket Type Selector */}
         <div>
           <label className="text-sm font-medium">Ticket Type</label>
           <select
@@ -72,7 +63,6 @@ const BookingModal = ({ event, onClose }: Props) => {
           </select>
         </div>
 
-        {/* Quantity */}
         <div>
           <label className="text-sm font-medium">Quantity</label>
           <input
@@ -84,7 +74,6 @@ const BookingModal = ({ event, onClose }: Props) => {
           />
         </div>
 
-        {/* Total */}
         <div className="bg-gray-50 p-3 rounded-lg">
           <p className="text-sm text-gray-500">Total Amount</p>
           <p className="text-lg font-bold text-purple-600">
@@ -92,7 +81,6 @@ const BookingModal = ({ event, onClose }: Props) => {
           </p>
         </div>
 
-        {/* Buttons */}
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}

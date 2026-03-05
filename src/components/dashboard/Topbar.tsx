@@ -26,14 +26,12 @@ const Topbar = ({ onMenuClick }: Props) => {
     const getCurrentPage = () => {
         if (!roleKey) return "Dashboard";
 
-        const links = roleLinks[roleKey] || [];
+        const links = roleKey ? roleLinks[roleKey] : [];
 
-        // Exact dashboard check
         if (location.pathname === basePath) {
             return "Dashboard";
         }
 
-        // Sort links by path length (longest first)
         const sortedLinks = [...links].sort(
             (a, b) => b.to.length - a.to.length
         );

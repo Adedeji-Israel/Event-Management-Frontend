@@ -1,8 +1,10 @@
 // pages/dashboard/DashboardHome.tsx
+import type { Event } from "@/types/event";
+import type { Ticket } from "@/types/ticket";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"
 import api from "@/lib/AxiosInterceptor";
-import { Users, CalendarDays, Ticket, Landmark, UserCheck, } from "lucide-react";
+import { Users, CalendarDays, Ticket as TicketIcon, Landmark, UserCheck, } from "lucide-react";
 import { isAfter } from "date-fns";
 
 import StatCard from "@/components/dashboard/StatCard";
@@ -10,16 +12,6 @@ import UpcomingEventsWidget from "@/components/dashboard/UpcomingEventsWidget";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import TicketSalesChart from "@/components/dashboard/charts/TicketSalesChart";
 import RevenueChart from "@/components/dashboard/charts/RevenueChart";
-
-interface Event {
-  _id: string;
-  title: string;
-  date: string;
-  location?: string;
-  price?: number;
-  image?: string;
-  bookingsCount?: number;
-}
 
 interface DashboardStats {
   totalUsers: number;
@@ -37,7 +29,7 @@ const DashboardHome = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
-  const [tickets, setTickets] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -65,9 +57,39 @@ const DashboardHome = () => {
     }
   };
 
+  const eventBookingMap = tickets.reduce((acc: Record<string, number>, ticket) => {
+    if (!ticket.event?._id) return acc;
+
+    const eventId = ticket.event._id;
+
+    acc[eventId] = (acc[eventId] || 0) + (ticket.totalQuantity || 0);
+
+    return acc;
+  }, {});
+
   const popularEvents = [...events]
-    .sort((a, b) => (b.bookingsCount || 0) - (a.bookingsCount || 0))
+    .map((event) => ({
+      ...event,
+      bookingsCount: eventBookingMap[event._id] || 0,
+    }))
+    .sort((a, b) => b.bookingsCount - a.bookingsCount)
     .slice(0, 3);
+
+  const getEventPriceLabel = (ticketTypes: Event["ticketTypes"] = []) => {
+    if (!ticketTypes.length) return "Free";
+
+    const prices = ticketTypes
+      .map((t) => Number(t.price))
+      .filter((p) => !isNaN(p));
+
+    if (!prices.length) return "Free";
+
+    const lowest = Math.min(...prices);
+
+    return lowest <= 0
+      ? "Free"
+      : `₦${lowest.toLocaleString()}`;
+  };
 
   const today = new Date();
 
@@ -90,7 +112,7 @@ const DashboardHome = () => {
         <StatCard title="Total Users" value={stats.totalUsers} icon={<Users size={16} />} />
         <StatCard title="Organizers" value={stats.totalOrganizers} icon={<UserCheck size={16} />} />
         <StatCard title="Total Events" value={stats.totalEvents} icon={<CalendarDays size={16} />} />
-        <StatCard title="Tickets Sold" value={stats.totalTicketsSold} icon={<Ticket size={16} />} />
+        <StatCard title="Tickets Sold" value={stats.totalTicketsSold} icon={<TicketIcon size={16} />} />
         <StatCard
           title="Total Revenue"
           value={stats.totalRevenue}
@@ -161,7 +183,7 @@ const DashboardHome = () => {
                   <h3 className="font-semibold">{event.title}</h3>
                   <p className="text-sm text-gray-500">{event.location || "Online"}</p>
                   <p className="text-sm text-gray-500">{new Date(event.date).toDateString()}</p>
-                  <p className="text-sm font-medium mt-1">{event.bookingsCount || 0} bookings</p>
+                  <p className="text-sm font-medium mt-1">{event.bookingsCount ?? 0} bookings</p>
                 </div>
               ))}
             </div>
@@ -186,7 +208,7 @@ const DashboardHome = () => {
                   <p className="text-xs text-gray-500">{event.location || "Online"}</p>
                   <p className="text-xs text-gray-500">{new Date(event.date).toDateString()}</p>
                   <p className="text-sm font-medium mt-1">
-                    ₦{event.price?.toLocaleString() || "Free"}
+                    ₦{getEventPriceLabel(event.ticketTypes)}
                   </p>
                 </div>
               ))}
@@ -210,10 +232,10 @@ const DashboardHome = () => {
                 <tbody>
                   {tickets.slice(0, 6).map((ticket) => (
                     <tr key={ticket._id} className="border-b hover:bg-gray-50">
-                      <td className="p-3">{ticket.user?.name || "Guest"}</td>
+                      <td className="p-3">{ticket.user?.email || "Guest"}</td>
                       <td className="p-3">{ticket.event?.title || "Deleted Event"}</td>
-                      <td className="p-3">{ticket.ticketCount}</td>
-                      <td className="p-3">₦{ticket.totalAmount?.toLocaleString()}</td>
+                      <td className="p-3">{ticket.totalQuantity}</td>
+                      <td className="p-3">₦{(ticket.amount ?? 0).toLocaleString()}</td>
                       <td className="p-3">{new Date(ticket.createdAt).toLocaleDateString()}</td>
                     </tr>
                   ))}

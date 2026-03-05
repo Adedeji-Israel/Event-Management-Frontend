@@ -17,14 +17,14 @@ const Sidebar = ({ isOpen, onClose }: Props) => {
   const roleKey = getRoleKey(user?.role);
   const links = roleKey ? roleLinks[roleKey] : [];
 
+
   return (
     <>
       {/* Overlay */}
       <div
         onClick={onClose}
-        className={`fixed inset-0 bg-black/40 z-30 lg:hidden ${
-          isOpen ? "block" : "hidden"
-        }`}
+        className={`fixed inset-0 bg-black/40 z-30 lg:hidden ${isOpen ? "block" : "hidden"
+          }`}
       />
 
       <aside
@@ -52,10 +52,9 @@ const Sidebar = ({ isOpen, onClose }: Props) => {
                 onClick={onClose}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition
-                  ${
-                    isActive
-                      ? "bg-purple-100 text-purple-600"
-                      : "text-gray-600 hover:bg-gray-100"
+                  ${isActive
+                    ? "bg-purple-100 text-purple-600"
+                    : "text-gray-600 hover:bg-gray-100"
                   }`
                 }
               >

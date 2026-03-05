@@ -1,4 +1,5 @@
 // src/components/dashboard/UpcomingEventsWidget.tsx
+import type { Event } from "@/types/event";
 import {
   format,
   startOfMonth,
@@ -10,13 +11,6 @@ import {
   isToday,
   isSameDay,
 } from "date-fns";
-
-interface Event {
-  title: string;
-  date: string; // ISO string
-  time: string;
-  location: string;
-}
 
 interface Props {
   upcomingEvent: Event | null;

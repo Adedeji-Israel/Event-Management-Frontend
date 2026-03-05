@@ -1,22 +1,10 @@
+import type { Event } from "@/types/event";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "@/lib/AxiosInterceptor";
 import EventsFilterBar from "@/components/events/EventsFilterBar";
 import { Link } from "react-router-dom";
 
-interface TicketType {
-    name: string;
-    price: number;
-}
-
-interface Event {
-    _id: string;
-    title: string;
-    date: string;
-    location: string;
-    image: string;
-    ticketTypes: TicketType[];
-}
 
 const AttendeeEvents = () => {
     const navigate = useNavigate();
@@ -47,8 +35,8 @@ const AttendeeEvents = () => {
     }
 
     /* ================= PRICE HELPER ================= */
-    const getPriceLabel = (ticketTypes: TicketType[]) => {
-        if (!ticketTypes || ticketTypes.length === 0) return "Free";
+    const getPriceLabel = (ticketTypes: Event["ticketTypes"] = []) => {
+        if (!ticketTypes.length) return "Free";
 
         const prices = ticketTypes
             .map((t) => Number(t.price))
@@ -57,10 +45,14 @@ const AttendeeEvents = () => {
         if (!prices.length) return "Free";
 
         const lowestPrice = Math.min(...prices);
-        return lowestPrice <= 0 ? "Free" : `Starting from ₦${lowestPrice.toLocaleString()}`;
+
+        return lowestPrice <= 0
+            ? "Free"
+            : `Starting from ₦${lowestPrice.toLocaleString()}`;
     };
 
-    const isPastEvent = (dateStr: string) => new Date(dateStr) < new Date();
+    const now = new Date();
+    const isPastEvent = (dateStr: string) => new Date(dateStr).getTime() < now.getTime();
 
     return (
         <div className="space-y-6">
@@ -69,7 +61,6 @@ const AttendeeEvents = () => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredEvents.map((event) => {
                     const past = isPastEvent(event.date);
-                    // const eventId = event._id
 
                     return (
                         <div

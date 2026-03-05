@@ -1,3 +1,5 @@
+import type { Event } from "@/types/event"
+import type { Ticket } from "@/types/ticket"
 import { useEffect, useState } from "react";
 import {
   Users,
@@ -10,15 +12,21 @@ import api from "@/lib/AxiosInterceptor";
 import { Link } from "react-router-dom";
 
 const OrganizerDashboard = () => {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await api.get("/events/my-events");
-        setEvents(res.data.events);
+        const [eventsRes, ticketsRes] = await Promise.all([
+          api.get("/events"),
+          api.get("/tickets"),
+        ]);
+
+        setEvents(eventsRes.data.events);
+        setTickets(ticketsRes.data.tickets);
       } catch (err: any) {
         setError("Failed to load dashboard data");
       } finally {
@@ -37,12 +45,12 @@ const OrganizerDashboard = () => {
   const liveEvents = events.filter(e => e.status === "live").length;
 
   const totalTicketsSold = events.reduce(
-    (sum, e) => sum + (e.bookingsCount || 0),
+    (sum, e) => sum + (e.totalTicketsSold || 0),
     0
   );
 
   const totalRevenue = events.reduce(
-    (sum, e) => sum + (e.revenue || 0),
+    (sum, e) => sum + (e.totalRevenue || 0),
     0
   );
 
@@ -75,8 +83,8 @@ const OrganizerDashboard = () => {
 
         <StatCard
           title="Total Revenue"
-          value={`₦${totalRevenue.toLocaleString()}`}
-          icon={<Landmark size={18} />}
+          value={totalRevenue}
+          icon={<Landmark size={18} />} isCurrency
         />
       </div>
 
@@ -122,12 +130,18 @@ const OrganizerDashboard = () => {
                 </div>
 
                 <div className="text-right">
-                  <p className="text-sm">
-                    {event.bookingsCount || 0} tickets
-                  </p>
-                  <p className="text-sm font-semibold">
-                    ₦{(event.revenue || 0).toLocaleString()}
-                  </p>
+                  {tickets.map((ticket) => (
+                    <div
+                      key={ticket._id} >
+                      <p className="text-sm">
+                        {ticket.totalQuantity || 0} tickets
+                      </p>
+                      <p className="text-sm font-semibold">
+                        ₦{(ticket.amount || 0).toLocaleString()}
+                      </p>
+                    </div>
+                  ))}
+
                 </div>
               </div>
             ))}

@@ -1,9 +1,13 @@
-export const getRoleKey = (role?: string) => {
+import type { SidebarRole } from "@/layouts/sidebarLinks";
+
+export const getRoleKey = (
+  role?: string
+): SidebarRole | undefined => {
   if (!role) return undefined;
 
   const normalized = role.trim().toLowerCase();
 
-  const roleMap: Record<string, string> = {
+  const roleMap: Record<string, SidebarRole> = {
     admin: "admin",
     organizer: "organizer",
     attendee: "attendee",

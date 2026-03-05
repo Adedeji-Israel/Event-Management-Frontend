@@ -1,9 +1,15 @@
-// import React from "react";
 import { Link } from "react-router-dom";
 import { Card } from "./ui/card";
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from "react-icons/fa";
 
-const SpeakerCard = ({ id, image, author, role }) => {
+interface SpeakerCardProps {
+  id: number;
+  image: string;
+  author: string;
+  role: string;
+}
+
+const SpeakerCard = ({ id, image, author, role }: SpeakerCardProps) => {
     return (
         <Card>
             <div className="rounded-2xl shadow-md p-6 flex flex-col items-center text-center">

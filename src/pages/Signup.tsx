@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import SignupSuccess from "@/components/SignupSuccess";
 import BackgroundImage from "@/assets/images/hero_area_image_3.jpg";
 import Logo from "@/assets/images/logo.png";
+import type { User } from "@/types/user";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -19,9 +20,53 @@ interface SignupFormData {
   email: string;
   password: string;
   dateOfBirth: string;
-  gender: string;
+  gender: User["gender"];
   profilePicture: FileList;
 }
+
+const FormSchema = yup.object({
+  fullName: yup.string().required("Full Name is required!"),
+  userName: yup.string().required("Username is required!"),
+  email: yup
+    .string()
+    .required("Email address is required!")
+    .matches(emailRegex, "Invalid email format"),
+  password: yup
+    .string()
+    .required("Password is required!")
+    .min(6, "Password must be at least 6 characters"),
+  dateOfBirth: yup
+    .string()
+    .required("Date of Birth is required!")
+    .test("age-validation", "You must be at least 18 years old", (value) => {
+      if (!value) return false;
+      const dob = new Date(value);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < dob.getDate())
+      ) {
+        age--;
+      }
+
+      return age >= 18;
+    }),
+  gender: yup
+    .mixed<"male" | "female">()
+    .oneOf(["male", "female"])
+    .required("Gender is required!"),
+  profilePicture: yup
+    .mixed<FileList>()
+    .required("Profile picture is required!")
+    .test(
+      "fileExists",
+      "Profile picture is required!",
+      (value) => value instanceof FileList && value.length > 0
+    ),
+});
 
 const Signup = () => {
   const { signup, submitting } = useAuth();
@@ -31,45 +76,6 @@ const Signup = () => {
   const [showSignupSuccess, setShowSignupSuccess] = useState(false);
 
   const handleTogglePassword = () => setShowPassword((prev) => !prev);
-
-  const FormSchema = yup.object({
-    fullName: yup.string().required("Full Name is required!"),
-    userName: yup.string().required("Username is required!"),
-    email: yup
-      .string()
-      .required("Email address is required!")
-      .matches(emailRegex, "Invalid email format"),
-    password: yup
-      .string()
-      .required("Password is required!")
-      .min(6, "Password must be at least 6 characters"),
-    dateOfBirth: yup
-      .string()
-      .required("Date of Birth is required!")
-      .test("age-validation", "You must be at least 18 years old", (value) => {
-        if (!value) return false;
-        const dob = new Date(value);
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const monthDiff = today.getMonth() - dob.getMonth();
-
-        if (
-          monthDiff < 0 ||
-          (monthDiff === 0 && today.getDate() < dob.getDate())
-        ) {
-          age--;
-        }
-        return age >= 18;
-      }),
-    gender: yup.string().required("Gender is required!"),
-    profilePicture: yup
-      .mixed()
-      .test(
-        "required",
-        "Profile picture is required!",
-        (value) => value && value.length > 0
-      ),
-  });
 
   const {
     register,
@@ -92,23 +98,19 @@ const Signup = () => {
     formData.append("profilePicture", data.profilePicture[0]);
 
     try {
-      const message = await signup(formData);
+      const message: string = await signup(formData);
 
       reset();
-      toast.success(message, { autoClose: 3500 });
+      toast.success(message, { autoClose: 3000 });
 
-      // Show success UI
-      setTimeout(() => {
-        setShowSignupSuccess(true);
-      }, 3500);
+      setShowSignupSuccess(true);
 
-      // Redirect after user sees success screen
       setTimeout(() => {
+        setShowSignupSuccess(false);
         navigate("/auth/login");
-      }, 10000);
-
+      }, 6000);
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(error?.message || "Signup failed");
     }
   };
 
@@ -117,30 +119,24 @@ const Signup = () => {
       {showSignupSuccess && (
         <SignupSuccess onClose={() => setShowSignupSuccess(false)} />
       )}
-
       <div
         className="min-h-screen py-10 bg-cover bg-center"
         style={{ backgroundImage: `url(${BackgroundImage})` }}
       >
         <div className="flex flex-col items-center">
-          <img src={Logo} className="w-60 mb-5" />
+          <img src={Logo} className="w-60 mb-5" alt="Logo" />
 
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="w-[90%] max-w-md bg-white p-8 rounded-xl shadow-xl"
           >
-            {/* FORM CONTENT — unchanged */}
-            <div className="flex flex-col items-center mb-6">
-              <h1 className="text-2xl font-bold text-[#4B22A6]">
-                CREATE YOUR ACCOUNT
-              </h1>
-            </div>
+            <h1 className="text-2xl font-bold text-[#4B22A6] text-center mb-6">
+              CREATE YOUR ACCOUNT
+            </h1>
 
             {/* Full Name */}
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                Full Name
-              </label>
+              <label className="block mb-1">Full Name</label>
               <input
                 type="text"
                 {...register("fullName")}
@@ -155,26 +151,20 @@ const Signup = () => {
 
             {/* Email */}
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                Email Address
-              </label>
+              <label className="block mb-1">Email Address</label>
               <input
                 type="email"
                 {...register("email")}
                 className="w-full border rounded-lg px-3 py-2"
               />
               {errors.email && (
-                <p className="text-red-600 text-sm">
-                  {errors.email.message}
-                </p>
+                <p className="text-red-600 text-sm">{errors.email.message}</p>
               )}
             </div>
 
             {/* Username */}
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                Username
-              </label>
+              <label className="block mb-1">Username</label>
               <input
                 type="text"
                 {...register("userName")}
@@ -189,9 +179,7 @@ const Signup = () => {
 
             {/* Password */}
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                Password
-              </label>
+              <label className="block mb-1">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -214,9 +202,7 @@ const Signup = () => {
 
             {/* Date of Birth */}
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                Date of Birth
-              </label>
+              <label className="block mb-1">Date of Birth</label>
               <input
                 type="date"
                 max={new Date().toISOString().split("T")[0]}
@@ -232,9 +218,7 @@ const Signup = () => {
 
             {/* Gender */}
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                Gender
-              </label>
+              <label className="block mb-1">Gender</label>
               <select
                 {...register("gender")}
                 className="w-full border rounded-lg px-3 py-2"
@@ -244,17 +228,13 @@ const Signup = () => {
                 <option value="female">Female</option>
               </select>
               {errors.gender && (
-                <p className="text-red-600 text-sm">
-                  {errors.gender.message}
-                </p>
+                <p className="text-red-600 text-sm">{errors.gender.message}</p>
               )}
             </div>
 
             {/* Profile Picture */}
             <div className="mb-6">
-              <label className="block text-gray-700 font-medium mb-1">
-                Profile Picture
-              </label>
+              <label className="block mb-1">Profile Picture</label>
               <input
                 type="file"
                 accept="image/*"
@@ -267,21 +247,23 @@ const Signup = () => {
               )}
             </div>
 
-            {/* submit button */}
             <button
               type="submit"
               disabled={!isValid || submitting}
-              className="w-full bg-[#4B22A7] hover:bg-[#3D1C88] text-white py-2 rounded-sm font-semibold cursor-pointer transition disabled:bg-[#9A84D6] disabled:cursor-not-allowed"
+              className="w-full bg-[#4B22A7] hover:bg-[#3D1C88] text-white py-2 rounded-sm font-semibold transition disabled:bg-[#9A84D6]"
             >
               {submitting ? "Signing Up..." : "SIGN UP"}
             </button>
 
-            <p className="mt-4 text-center text-gray-600"> Already have an account?{" "}
-              <Link to="/auth/login" className="text-blue-600 font-semibold hover:underline">
+            <p className="mt-4 text-center text-gray-600">
+              Already have an account?{" "}
+              <Link
+                to="/auth/login"
+                className="text-blue-600 font-semibold hover:underline"
+              >
                 LOG IN
               </Link>
             </p>
-
           </form>
         </div>
       </div>

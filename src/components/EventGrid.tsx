@@ -1,3 +1,4 @@
+import type { Event } from "@/types/event";
 import { useState, useEffect } from "react";
 import EventCard from "@/components/EventCard"
 import api from "@/lib/AxiosInterceptor";
