@@ -19,8 +19,10 @@ export interface NavItem {
   end?: boolean;
 }
 
+export type SidebarRole = "admin" | "organizer" | "attendee";
+
 /* ================= ADMIN ================= */
-export const adminLinks = [
+export const adminLinks: NavItem[] = [
   { name: "Dashboard", to: "/dashboard/admin", icon: LayoutDashboard, end: true },
   { name: "Events", to: "/dashboard/admin/events", icon: Ticket },
   { name: "Bookings", to: "/dashboard/admin/bookings", icon: CreditCard },
@@ -32,7 +34,7 @@ export const adminLinks = [
 ];
 
 /* ================= ORGANIZER ================= */
-export const organizerLinks = [
+export const organizerLinks: NavItem[] = [
   { name: "Dashboard", to: "/dashboard/organizer", icon: LayoutDashboard, end: true },
   { name: "My Events", to: "/dashboard/organizer/events", icon: Ticket },
   { name: "Bookings", to: "/dashboard/organizer/bookings", icon: CreditCard },
@@ -41,7 +43,7 @@ export const organizerLinks = [
 ];
 
 /* ================= ATTENDEE ================= */
-export const attendeeLinks = [
+export const attendeeLinks: NavItem[] = [
   { name: "Dashboard", to: "/dashboard/attendee", icon: LayoutDashboard, end: true },
   { name: "Browse Events", to: "/dashboard/attendee/events", icon: Ticket, end: true },
   { name: "Upcoming Events", to: "/dashboard/attendee/events/upcoming", icon: Ticket },
@@ -50,16 +52,10 @@ export const attendeeLinks = [
   { name: "Calendar", to: "/dashboard/attendee/calendar", icon: Calendar },
 ];
 
-export type SidebarRole = "admin" | "organizer" | "attendee";
+/* ================= ROLE MAP ================= */
 
 export const roleLinks: Record<SidebarRole, NavItem[]> = {
-  admin: [
-    { name: "Dashboard", to: "/dashboard/admin", icon: LayoutDashboard, end: true },
-  ],
-  organizer: [
-    { name: "My Events", to: "/dashboard/organizer/events", icon: Calendar },
-  ],
-  attendee: [
-    { name: "My Tickets", to: "/dashboard/attendee/tickets", icon: Ticket },
-  ],
+  admin: adminLinks,
+  organizer: organizerLinks,
+  attendee: attendeeLinks,
 };

@@ -48,8 +48,6 @@ const DashboardHome = () => {
       setEvents(eventsRes.data.events || []);
       setTickets(ticketsRes.data.tickets || []);
 
-      console.log("stats: ", statsRes.data);
-
     } catch (err: any) {
       console.error("Dashboard fetch error:", err.message);
     } finally {

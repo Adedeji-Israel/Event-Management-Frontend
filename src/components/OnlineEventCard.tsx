@@ -9,7 +9,7 @@ interface OnlineEventCardProps {
   id: string;
   image: string;
   title: string;
-  date: string;
+  date: string;  
   organizer: string | User 
 }
 
@@ -17,7 +17,7 @@ const OnlineEventCard = ({ image, title, date, organizer, id }: OnlineEventCardP
   const organizerName =
     typeof organizer === "string"
       ? organizer
-      : organizer.fullName;
+      : organizer.fullName; 
     return (
         <motion.div
             whileHover={{ scale: 1.02 }}

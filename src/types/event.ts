@@ -22,4 +22,6 @@ export interface Event {
   totalRevenue: number;
   createdAt: string;
   updatedAt: string;
+  bookingsCount?: number;
+  revenue: number; 
 }
