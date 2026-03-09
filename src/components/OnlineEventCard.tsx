@@ -27,7 +27,7 @@ const OnlineEventCard = ({ image, title, date, organizer, id }: OnlineEventCardP
             <Card className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition h-full flex gap-1 flex-row">
                 {/* Left Image */}
                 <div className="relative w-2/5 overflow-hidden">
-                    <Link to={`/online-events/${id}`}>
+                    <Link to={`/events/${id}`}>
                         <img
                             src={image}
                             alt={title}
@@ -43,7 +43,7 @@ const OnlineEventCard = ({ image, title, date, organizer, id }: OnlineEventCardP
                     <CardContent className="flex-grow space-y-6">
                         {/* Title */}
                         <div>
-                            <Link to={`/online-events/${id}`}>
+                            <Link to={`/events/${id}`}>
                                 <h3 className="text-xl font-semibold leading-snug hover:text-[#283746] transition">
                                     {title}
                                 </h3>
@@ -71,7 +71,7 @@ const OnlineEventCard = ({ image, title, date, organizer, id }: OnlineEventCardP
                             variant="ghost"
                             className="text-[#36358F] text-sm rounded-sm border-2 border-[#36358F] hover:text-white hover:bg-[#36358F] transition-colors duration-600 !px-4 !py-5"
                         >
-                            <Link to={`/online-events/${id}`} className="flex items-center gap-2">
+                            <Link to={`/auth/login`} className="flex items-center gap-2">
                                 BUY NOW
                             </Link>
                         </Button>

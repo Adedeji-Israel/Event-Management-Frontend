@@ -34,6 +34,7 @@ const PaymentVerifyPage = () => {
                 setTicket(res.data.ticket);
                 setStatus("success");
             } catch (error) {
+                console.error("Payment verification failed:", error);
                 setStatus("failed");
             }
         };

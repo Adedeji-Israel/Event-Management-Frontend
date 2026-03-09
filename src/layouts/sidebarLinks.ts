@@ -48,7 +48,7 @@ export const attendeeLinks: NavItem[] = [
   { name: "Browse Events", to: "/dashboard/attendee/events", icon: Ticket, end: true },
   { name: "Upcoming Events", to: "/dashboard/attendee/events/upcoming", icon: Ticket },
   { name: "Past Events", to: "/dashboard/attendee/events/past", icon: Ticket },
-  { name: "My Tickets", to: "/dashboard/attendee/my-tickets", icon: Ticket },
+  { name: "My Tickets", to: "/dashboard/attendee/my-tickets", icon: CreditCard },
   { name: "Calendar", to: "/dashboard/attendee/calendar", icon: Calendar },
 ];
 

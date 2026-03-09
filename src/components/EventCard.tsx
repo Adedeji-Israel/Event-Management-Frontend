@@ -72,7 +72,7 @@ const EventCard = ({
             variant="ghost"
             className="text-[#36358F] text-lg rounded-sm border-2 border-[#36358F] hover:text-white hover:bg-[#36358F]"
           >
-            <Link to={`/events/${id}/book-ticket`}>
+            <Link to={`/auth/login`}>
               BUY NOW
             </Link>
           </Button>

@@ -25,8 +25,6 @@ const UpcomingEvent = () => {
                         </Link>
                     </Button>
                 </div>
-
-
             </div>
         </section>
     )
