@@ -18,7 +18,8 @@ const PaymentVerifyPage = () => {
 
     // ================= VERIFY PAYMENT =================
     useEffect(() => {
-        const reference = params.get("reference");
+        const reference = params.get("reference") || params.get("trxref");
+
         if (!reference) {
             setStatus("failed");
             return;
@@ -26,9 +27,8 @@ const PaymentVerifyPage = () => {
 
         const verify = async () => {
             try {
-                // Populate event details from backend
                 const res = await api.get(
-                    `/tickets/payment/confirm?reference=${reference}&populateEvent=true`
+                    `/tickets/payment/confirm?reference=${reference}`
                 );
 
                 setTicket(res.data.ticket);

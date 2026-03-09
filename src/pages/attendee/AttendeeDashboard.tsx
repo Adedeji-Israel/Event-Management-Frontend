@@ -71,12 +71,6 @@ const AttendeeDashboard = () => {
       {/* ================= STATS ================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         <StatCard
-          title="Total Bookings"
-          value={bookings.length}
-          icon={<CalendarDays size={18} />}
-        />
-
-        <StatCard
           title="Past Events"
           value={pastBookings.length}
           icon={<Clock size={18} />}
@@ -86,6 +80,12 @@ const AttendeeDashboard = () => {
           title="Upcoming Events"
           value={upcomingBookings.length}
           icon={<Clock size={18} />}
+        />
+
+        <StatCard
+          title="Total Bookings"
+          value={bookings.length}
+          icon={<CalendarDays size={18} />}
         />
 
         <StatCard
