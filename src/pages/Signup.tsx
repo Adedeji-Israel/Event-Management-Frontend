@@ -250,7 +250,7 @@ const Signup = () => {
             <button
               type="submit"
               disabled={!isValid || submitting}
-              className="w-full bg-[#4B22A7] hover:bg-[#3D1C88] text-white py-2 rounded-sm font-semibold transition disabled:bg-[#9A84D6]"
+              className="w-full bg-[#4B22A7] hover:bg-[#3D1C88] text-white py-2 rounded-sm font-semibold cursor-pointer transition disabled:bg-[#9A84D6] disabled:cursor-not-allowed"
             >
               {submitting ? "Signing Up..." : "SIGN UP"}
             </button>
