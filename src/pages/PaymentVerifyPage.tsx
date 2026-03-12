@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import confetti from "canvas-confetti";
 import api from "@/lib/AxiosInterceptor";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import BackgroundImage from "@/assets/images/hero_area_image_3.jpg";
@@ -57,14 +56,6 @@ const PaymentVerifyPage = () => {
         return () => clearInterval(interval);
 
     }, [reference]);
-
-    useEffect(() => {
-        confetti({
-            particleCount: 120,
-            spread: 70,
-            origin: { y: 0.6 }
-        });
-    }, []);
 
     /* ================= SUCCESS REDIRECT ================= */
     useEffect(() => {
