@@ -36,7 +36,8 @@ export const adminLinks: NavItem[] = [
 /* ================= ORGANIZER ================= */
 export const organizerLinks: NavItem[] = [
   { name: "Dashboard", to: "/dashboard/organizer", icon: LayoutDashboard, end: true },
-  { name: "My Events", to: "/dashboard/organizer/events", icon: Ticket },
+  { name: "My Events", to: "/dashboard/organizer/events", icon: Ticket, end: true },
+  { name: "Create Event", to: "/dashboard/organizer/events/create", icon: CreditCard },
   { name: "Bookings", to: "/dashboard/organizer/bookings", icon: CreditCard },
   { name: "Attendees", to: "/dashboard/organizer/attendees", icon: Users },
   { name: "Analytics", to: "/dashboard/organizer/analytics", icon: BarChart3 },

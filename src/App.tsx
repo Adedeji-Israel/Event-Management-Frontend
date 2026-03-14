@@ -43,6 +43,7 @@ function App() {
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/verify-account/:verificationToken" element={<VerifyAccount />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        <Route path="/events/:eventId" element={<SingleEvent />} />
         <Route path="/all-events" element={<AllEvents />} />
 
         <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
@@ -57,7 +58,7 @@ function App() {
             <Route path="admin" element={<DashboardHome />} />
             <Route path="admin/events" element={<AdminEvents />} />
             <Route path="events/:eventId" element={<SingleEvent />} />
-          </Route> 
+          </Route>
 
           {/* ORGANIZER */}
           <Route element={<ProtectedRoute allowedRoles={["organizer"]} />}>
@@ -72,7 +73,7 @@ function App() {
             <Route path="attendee" element={<AttendeeDashboard />} />
             <Route path="attendee/events" element={<AttendeeEvents />} />
             <Route path="attendee/events/upcoming" element={<UpcomingEvents />} />
-            <Route path="attendee/events/past" element={<PastEvents />} /> 
+            <Route path="attendee/events/past" element={<PastEvents />} />
             <Route path="attendee/my-tickets" element={<AttendeeTickets />} />
           </Route>
         </Route>

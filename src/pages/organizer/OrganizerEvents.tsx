@@ -35,7 +35,7 @@ const OrganizerEvents = () => {
 
     try {
       setDeleting(id);
-      await api.delete(`/events/${id}`);
+      await api.delete(`/events/${id}/delete`);
 
       setEvents((prev) => prev.filter((event) => event._id !== id));
     } catch (err: any) {

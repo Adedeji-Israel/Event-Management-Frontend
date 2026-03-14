@@ -1,140 +1,45 @@
-import { useEffect, useState } from "react";
-import { Modal, Button, Form, Spinner } from "react-bootstrap";
-import api from "@/lib/AxiosInterceptor";
+import EventForm from "@/components/forms/EventForm";
+import type { Event } from "@/types/event";
 
 interface Props {
   show: boolean;
   handleClose: () => void;
-  eventData: any;
-  onSuccess: (updatedEvent: any) => void;
+  eventData: Event | null;
+  onSuccess: (event: Event) => void;
 }
 
-const EditEventModal = ({ show, handleClose, eventData, onSuccess }: Props) => {
-  const [form, setForm] = useState<any>(null);
-  const [image, setImage] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (eventData) {
-      setForm(eventData);
-    }
-  }, [eventData]);
-
-  if (!form) return null;
-
-  const handleChange = (e: any) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const formData = new FormData();
-
-      Object.entries(form).forEach(([key, value]) => {
-        formData.append(key, value as any);
-      });
-
-      if (image) formData.append("image", image);
-
-      const res = await api.put(`/events/${form._id}`, formData);
-
-      onSuccess(res.data.event); // update parent state
-      handleClose();
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Update failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+const EditEventModal = ({
+  show,
+  handleClose,
+  eventData,
+  onSuccess,
+}: Props) => {
+  if (!show || !eventData) return null;
 
   return (
-    <Modal show={show} onHide={handleClose} centered size="lg" backdrop="static">
-      <Modal.Header closeButton>
-        <Modal.Title>Edit Event</Modal.Title>
-      </Modal.Header>
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
-      <Form onSubmit={handleSubmit}>
-        <Modal.Body className="space-y-3">
+      <div className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
 
-          <Form.Group>
-            <Form.Label>Title</Form.Label>
-            <Form.Control
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-            />
-          </Form.Group>
+        <div className="flex justify-between items-center border-b py-2 mb-6">
+          <h2 className="text-2xl text-purple-600 font-bold">Edit Event</h2>
 
-          <Form.Group>
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-            />
-          </Form.Group>
+          <button
+            onClick={handleClose}
+            className="text-gray-500 text-2xl font-bold cursor-pointer hover:text-black"
+          >
+            ✕
+          </button>
+        </div>
 
-          <Form.Group>
-            <Form.Label>Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="date"
-              value={form.date?.slice(0, 10)}
-              onChange={handleChange}
-            />
-          </Form.Group>
+        <EventForm
+          event={eventData}
+          onSuccess={onSuccess}
+          onClose={handleClose}
+        />
 
-          <Form.Group>
-            <Form.Label>Time</Form.Label>
-            <Form.Control
-              type="time"
-              name="time"
-              value={form.time}
-              onChange={handleChange}
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Location</Form.Label>
-            <Form.Control
-              name="location"
-              value={form.location}
-              onChange={handleChange}
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Change Image</Form.Label>
-            <Form.Control
-              type="file"
-              onChange={(e: any) => setImage(e.target.files[0])}
-            />
-          </Form.Group>
-
-        </Modal.Body>
-
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-
-          <Button variant="primary" type="submit" disabled={loading}>
-            {loading ? (
-              <>
-                <Spinner size="sm" animation="border" className="me-2" />
-                Updating...
-              </>
-            ) : (
-              "Update Event"
-            )}
-          </Button>
-        </Modal.Footer>
-      </Form>
-    </Modal>
+      </div>
+    </div>
   );
 };
 

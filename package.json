@@ -21,6 +21,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
+    "formik": "^2.4.9",
     "framer-motion": "^12.23.12",
     "latest-version": "^9.0.0",
     "lucide-react": "^0.540.0",
