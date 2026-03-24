@@ -206,7 +206,7 @@ const DashboardHome = () => {
                   <p className="text-xs text-gray-500">{event.location || "Online"}</p>
                   <p className="text-xs text-gray-500">{new Date(event.date).toDateString()}</p>
                   <p className="text-sm font-medium mt-1">
-                    ₦{getEventPriceLabel(event.ticketTypes)}
+                    {getEventPriceLabel(event.ticketTypes)}
                   </p>
                 </div>
               ))}
