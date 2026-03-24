@@ -17,7 +17,6 @@ const Sidebar = ({ isOpen, onClose }: Props) => {
   const roleKey = getRoleKey(user?.role);
   const links = roleKey ? roleLinks[roleKey] : [];
 
-
   return (
     <>
       {/* Overlay */}
@@ -38,8 +37,8 @@ const Sidebar = ({ isOpen, onClose }: Props) => {
         <div>
           <div className="bg-[#4738B9] h-18 px-5 flex items-center justify-between">
             <img src={AppLogo} className="w-40" />
-            <button onClick={onClose} className="lg:hidden text-white">
-              <X size={22} />
+            <button onClick={onClose} className="lg:hidden cursor-pointer text-white">
+              <X size={30} />
             </button>
           </div>
 

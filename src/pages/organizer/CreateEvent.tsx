@@ -12,7 +12,7 @@ const CreateEvent = () => {
 
       <EventForm
         onSuccess={() => {
-          navigate("/dashboard/organizer/events");
+          navigate("/dashboard/organizer/events"); 
         }}
       />
     </div>

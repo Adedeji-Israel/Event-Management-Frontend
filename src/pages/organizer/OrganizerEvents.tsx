@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import api from "@/lib/AxiosInterceptor";
 import EditEventModal from "@/components/modals/EditEventModal";
 import { Eye, Pencil, Trash2, CalendarDays, MapPin } from "lucide-react";
 import type { Event } from "@/types/event";
+import { toastSuccess } from "@/utils/toast";
+import ConfirmModal from "@/components/modals/ConfirmModal";
 
 const OrganizerEvents = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState<string | null>(null);
-  const [error, setError] = useState("");
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false); const [error, setError] = useState("");
 
   /* ================= FETCH EVENTS ================= */
   const fetchEvents = async () => {
@@ -19,7 +22,7 @@ const OrganizerEvents = () => {
       const res = await api.get("/events/my-events");
       setEvents(res.data.events || []);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to fetch events");
+      setError("Failed to load your events");
     } finally {
       setLoading(false);
     }
@@ -29,19 +32,33 @@ const OrganizerEvents = () => {
     fetchEvents();
   }, []);
 
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.success) {
+      toastSuccess(location.state.success);
+    }
+  }, [location.state]);
+
   /* ================= DELETE EVENT ================= */
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Delete this event?")) return;
-
+  const handleDelete = async () => {
+    if (!selectedEventId) return;
     try {
-      setDeleting(id);
-      await api.delete(`/events/${id}/delete`);
+      setDeleting(true);
 
-      setEvents((prev) => prev.filter((event) => event._id !== id));
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Delete failed");
+      await api.delete(`/events/${selectedEventId}/delete`);
+
+      setEvents((prev) =>
+        prev.filter((event) => event._id !== selectedEventId)
+      );
+
+      toastSuccess("Event deleted successfully");
+
+      setDeleteModal(false);
+      setSelectedEventId(null);
+
     } finally {
-      setDeleting(null);
+      setDeleting(false);
     }
   };
 
@@ -106,13 +123,12 @@ const OrganizerEvents = () => {
                 />
 
                 <span
-                  className={`absolute top-3 right-3 text-xs px-3 py-1 rounded-full capitalize ${
-                    event.status === "live"
-                      ? "bg-green-100 text-green-600"
-                      : event.status === "draft"
+                  className={`absolute top-3 right-3 text-xs px-3 py-1 rounded-full capitalize ${event.status === "live"
+                    ? "bg-green-100 text-green-600"
+                    : event.status === "draft"
                       ? "bg-yellow-100 text-yellow-600"
                       : "bg-gray-200 text-gray-600"
-                  }`}
+                    }`}
                 >
                   {event.status}
                 </span>
@@ -181,13 +197,16 @@ const OrganizerEvents = () => {
 
                   {/* DELETE */}
                   <button
-                    onClick={() => handleDelete(event._id)}
-                    disabled={deleting === event._id}
-                    className="flex-1 flex items-center justify-center gap-1 text-sm bg-red-50 text-red-600 hover:bg-red-100 py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => {
+                      setSelectedEventId(event._id);
+                      setDeleteModal(true);
+                    }}
+                    className="flex-1 flex items-center justify-center gap-1 text-sm bg-red-50 text-red-600 hover:bg-red-100 py-2 rounded-lg transition"
                   >
                     <Trash2 size={16} />
-                    {deleting === event._id ? "Deleting..." : "Delete"}
+                    Delete
                   </button>
+
                 </div>
               </div>
             </div>
@@ -208,6 +227,18 @@ const OrganizerEvents = () => {
           );
         }}
       />
+
+      <ConfirmModal
+        show={deleteModal}
+        loading={deleting}
+        title="Delete Event"
+        message="Are you sure you want to delete this event? This action cannot be undone."
+        confirmText="Delete"
+        confirmVariant="danger"
+        onClose={() => !deleting && setDeleteModal(false)}
+        onConfirm={handleDelete}
+      />
+
     </div>
   );
 };

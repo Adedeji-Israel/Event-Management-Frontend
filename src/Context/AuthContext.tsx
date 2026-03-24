@@ -43,8 +43,12 @@ const AuthProvider = ({ children }: Props) => {
       const { data } = await api.post("/auth/signup", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
       if (data.status !== "success") throw new Error(data.message);
+
       return data.message;
+    } catch (err: any) {
+      throw new Error(err.message); // ✅ CLEAN
     } finally {
       setSubmitting(false);
     }
@@ -57,8 +61,8 @@ const AuthProvider = ({ children }: Props) => {
       const { data } = await api.post("/auth/login", formData);
       if (data.status !== "success") throw new Error(data.message);
 
-      const userData: User = data.data.user;
-      const userToken: string = data.data.token;
+      const userData = data.data.user;
+      const userToken = data.data.token;
 
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("token", userToken);
@@ -69,21 +73,24 @@ const AuthProvider = ({ children }: Props) => {
       return userData;
     } catch (err: any) {
       clearAuthData();
-      throw new Error(err.response?.data?.message || "Login failed");
+      throw new Error(err.message); // ✅ CLEAN
     } finally {
       setSubmitting(false);
     }
   };
 
-  // LOGOUT
+  // LOGOUT 
   const logout = async () => {
     try {
       await api.post("/auth/logout");
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
-    finally {
+    } catch (error) {
+      console.warn("Logout failed on server");
+    } finally {
       clearAuthData();
+
+      // ✅ GLOBAL FLAG
+      sessionStorage.setItem("justLoggedOut", "true");
+
       navigate("/auth/login", { replace: true });
     }
   };

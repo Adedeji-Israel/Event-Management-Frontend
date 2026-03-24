@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import FullPageLoader from "@/components/FullPageLoader";
+// import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import UpcomingEvent from "@/components/UpcomingEvent";
@@ -13,15 +12,15 @@ import Copyright from "@/components/Copyright";
 import BackgroundImage from "@/assets/images/hero_area_image_3.jpg"
 
 const LandingPage = () => {
-  const [pageLoading, setPageLoading] = useState(true);
+  // const [pageLoading, setPageLoading] = useState(true);
 
-  useEffect(() => {
-    setTimeout(() => setPageLoading(false), 2000); // simulate loading
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => setPageLoading(false), 2000); // simulate loading
+  // }, []);
 
   return (
     <>
-    {pageLoading && <FullPageLoader />} 
+    {/* {pageLoading && <FullPageLoader />}  */}
       <div
         className="relative bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${BackgroundImage})` }}

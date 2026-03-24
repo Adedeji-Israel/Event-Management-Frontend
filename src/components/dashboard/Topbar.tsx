@@ -52,9 +52,9 @@ const Topbar = ({ onMenuClick }: Props) => {
             <div className="flex items-center gap-3">
                 <button
                     onClick={onMenuClick}
-                    className="lg:hidden p-2 rounded-md hover:bg-gray-100"
+                    className="lg:hidden p-2 rounded-md cursor-pointer hover:bg-gray-100"
                 >
-                    <Menu size={22} />
+                    <Menu size={30} />
                 </button>
 
                 <div>

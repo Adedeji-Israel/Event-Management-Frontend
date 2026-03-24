@@ -1,3 +1,4 @@
+import Modal from "react-bootstrap/Modal";
 import EventForm from "@/components/forms/EventForm";
 import type { Event } from "@/types/event";
 
@@ -14,32 +15,45 @@ const EditEventModal = ({
   eventData,
   onSuccess,
 }: Props) => {
-  if (!show || !eventData) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <Modal
+      show={show}
+      onHide={handleClose}
+      centered
+      size="lg"
+      backdrop="static"
+      keyboard={false}
+    >
+      {/* HEADER */}
+      <Modal.Header className="flex justify-between items-center border-b py-2">
+        <Modal.Title className="text-purple-600 font-bold text-xl">
+          Edit Event
+        </Modal.Title>
 
-      <div className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <button
+          onClick={handleClose}
+          className="text-gray-500 text-xl font-bold cursor-pointer hover:text-black"
+        >
+          ✕
+        </button>
+      </Modal.Header>
 
-        <div className="flex justify-between items-center border-b py-2 mb-6">
-          <h2 className="text-2xl text-purple-600 font-bold">Edit Event</h2>
-
-          <button
-            onClick={handleClose}
-            className="text-gray-500 text-2xl font-bold cursor-pointer hover:text-black"
-          >
-            ✕
-          </button>
-        </div>
-
-        <EventForm
-          event={eventData}
-          onSuccess={onSuccess}
-          onClose={handleClose}
-        />
-
-      </div>
-    </div>
+      {/* BODY */}
+      <Modal.Body
+        style={{
+          maxHeight: "75vh",
+          overflowY: "auto",
+        }}
+      >
+        {eventData && (
+          <EventForm
+            event={eventData}
+            onSuccess={onSuccess}
+            onClose={handleClose}
+          />
+        )}
+      </Modal.Body>
+    </Modal>
   );
 };
 

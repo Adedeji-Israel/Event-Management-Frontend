@@ -3,14 +3,28 @@ import Modal from "react-bootstrap/Modal";
 
 interface Props {
     show: boolean;
-    loading: boolean;
+    loading?: boolean;
+
+    title: string;
+    message: string;
+
+    confirmText?: string;
+    cancelText?: string;
+
+    confirmVariant?: string;
+
     onClose: () => void;
     onConfirm: () => void;
 }
 
-function LogoutConfirmModal({
+function ConfirmModal({
     show,
-    loading,
+    loading = false,
+    title,
+    message,
+    confirmText = "Confirm",
+    cancelText = "Cancel",
+    confirmVariant = "danger",
     onClose,
     onConfirm,
 }: Props) {
@@ -24,54 +38,49 @@ function LogoutConfirmModal({
             animation
         >
             {/* HEADER */}
-            <Modal.Header
-                className="flex justify-between items-center border-b py-2 mb-2"
-            >
-                <Modal.Title className="font-semibold text-xl text-purple-600">Confirm Logout</Modal.Title>
+            <Modal.Header className="flex justify-between align-center">
+                <Modal.Title className="text-2xl ">{title}</Modal.Title>
 
-                {/* 🔥 Single close button */}
+                {/* Custom Close Button */}
                 <button
                     onClick={onClose}
                     disabled={loading}
-                    className="text-xl font-bold cursor-pointer hover:text-black disabled:opacity-50"
+                    className="text-gray-500 text-2xl font-bold cursor-pointer hover:text-black border-0 bg-transparent"
                 >
                     ✕
                 </button>
             </Modal.Header>
 
             {/* BODY */}
-            <Modal.Body className="text-gray-600">
-                Are you sure you want to sign out? You’ll need to log in again to access your dashboard.
-            </Modal.Body>
+            <Modal.Body className="text-gray-600">{message}</Modal.Body>
 
             {/* FOOTER */}
-            <Modal.Footer className="w-full d-flex items-center">
-                {/* 🔥 Cancel */}
+            <Modal.Footer className="w-full d-flex">
+                {/* Cancel */}
                 <Button
                     variant="outline-secondary"
                     size="sm"
                     onClick={onClose}
                     disabled={loading}
-                    className="px-4"
                 >
-                    Cancel
+                    {cancelText}
                 </Button>
 
                 <div className="flex-grow-1" />
 
-                {/* 🔥 Confirm */}
+                {/* Confirm */}
                 <Button
-                    variant="danger"
+                    variant={confirmVariant}
                     size="sm"
                     onClick={onConfirm}
                     disabled={loading}
                     className="d-flex align-items-center gap-2 px-4"
                 >
-                    {loading ? "Signing out..." : "Sign Out"}
+                    {loading ? "Processing..." : confirmText}
                 </Button>
             </Modal.Footer>
         </Modal>
     );
 }
 
-export default LogoutConfirmModal;
+export default ConfirmModal;

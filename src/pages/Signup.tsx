@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@/hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import { toast } from "react-toastify";
+import { toastSuccess, toastError } from "@/utils/toast";
 
 import SignupSuccess from "@/components/SignupSuccess";
 import BackgroundImage from "@/assets/images/hero_area_image_3.jpg";
@@ -98,10 +98,10 @@ const Signup = () => {
     formData.append("profilePicture", data.profilePicture[0]);
 
     try {
-      const message: string = await signup(formData);
+      const message = await signup(formData);
 
       reset();
-      toast.success(message, { autoClose: 3000 });
+      toastSuccess(message);
 
       setShowSignupSuccess(true);
 
@@ -109,8 +109,9 @@ const Signup = () => {
         setShowSignupSuccess(false);
         navigate("/auth/login");
       }, 6000);
+
     } catch (error: any) {
-      toast.error(error?.message || "Signup failed");
+      toastError(error.message);
     }
   };
 

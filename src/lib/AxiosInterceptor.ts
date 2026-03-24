@@ -1,52 +1,63 @@
-// src/api/AxiosInterceptor.ts
-import axios, { AxiosError } from "axios"
+// src/lib/AxiosInterceptor.ts
+import axios, { AxiosError } from "axios";
 
-const baseUrl = import.meta.env.VITE_BASE_URL
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const api = axios.create({
   baseURL: baseUrl,
   withCredentials: true,
   timeout: 35000,
-})
+});
 
-/* ================= REQUEST INTERCEPTOR ================= */
+/* ================= REQUEST ================= */
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
 
     if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
-    return config
+    return config;
   },
   (error) => Promise.reject(error)
-)
+);
 
-/* ================= RESPONSE INTERCEPTOR ================= */
+/* ================= RESPONSE ================= */
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<any>) => {
+    let message = "Something went wrong";
+
     if (error.response) {
-      const { status, data } = error.response
+      const { status, data } = error.response;
 
-      console.error("API Error:", {
-        status,
-        message: (data as any)?.message,
-        url: error.config?.url,
-      })
+      message = data?.message || message;
 
+      // 🔥 Handle auth globally
       if (status === 401) {
-        localStorage.removeItem("token")
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        // 🔥 Prevent redirect loop
+        if (!window.location.pathname.includes("/auth/login")) {
+          window.location.href = "/auth/login";
+        }
       }
+
     } else if (error.request) {
-      console.error("Network error. Server not responding.")
+      message = "Network error. Please check your connection.";
     } else {
-      console.error("Axios config error:", error.message)
+      message = error.message;
     }
 
-    return Promise.reject(error)
+    // 🔥 VERY IMPORTANT: return CLEAN error
+    return Promise.reject({
+      message,
+      status: error.response?.status,
+      original: error,
+    });
   }
-)
+);
 
-export default api
+export default api;

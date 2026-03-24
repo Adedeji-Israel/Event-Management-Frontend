@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "react-toastify";
+import { toastSuccess, toastError } from "@/utils/toast";
 import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import BackgroundImage from "@/assets/images/hero_area_image_3.jpg";
 import Logo from "@/assets/images/logo.png"
@@ -31,6 +31,14 @@ const FormSchema = yup.object({
 const Login = () => {
   const { login, submitting } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 🔥 Get where user was trying to go
+  const from =
+    (location.state as any)?.from?.pathname &&
+      (location.state as any)?.from?.pathname !== "/auth/login"
+      ? (location.state as any).from.pathname
+      : "/";
 
   const {
     register,
@@ -50,35 +58,34 @@ const Login = () => {
       const user = await login(data);
 
       reset();
-      toast.success("Login successful!");
+      toastSuccess("Login successful!");
 
-      // 🔁 ROLE-BASED REDIRECT
-      if (!user?.role) {
-        console.warn("User role missing");
-        navigate("/");
+      // 🔥 redirect back if exists
+      if (from && from !== "/") {
+        navigate(from, { replace: true, state: {} });
         return;
       }
 
+      // 🔁 fallback: role-based redirect
       switch (user.role) {
         case "admin":
-          navigate("/dashboard/admin");
+          navigate("/dashboard/admin", { replace: true });
           break;
         case "organizer":
-          navigate("/dashboard/organizer");
+          navigate("/dashboard/organizer", { replace: true });
           break;
         case "user":
-          navigate("/dashboard/attendee");
+          navigate("/dashboard/attendee", { replace: true });
           break;
         default:
-          console.warn("Unknown role:", user.role);
-          navigate("/");
+          navigate("/", { replace: true });
       }
 
     } catch (error: any) {
-      toast.error(error.message);
+      toastError(error.message);
     }
   };
-  
+
   return (
     <div
       className="w-full min-h-screen py-10 bg-gray-100 bg-cover bg-center bg-no-repeat"
