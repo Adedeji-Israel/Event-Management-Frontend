@@ -63,7 +63,7 @@ const PaymentVerifyPage = () => {
         if (status !== "success") return;
 
         if (countdown === 0) {
-            navigate("/dashboard/attendee/my-tickets");
+            navigate("/dashboard/attendee/");
             return;
         }
 
@@ -174,9 +174,10 @@ const PaymentVerifyPage = () => {
             className="w-full min-h-screen flex items-center justify-center bg-cover bg-center p-6"
             style={{ backgroundImage: `url(${BackgroundImage})` }}
         >
+            <img src={Logo} alt="logo" className="w-60 mx-auto mb-2" />
+
             <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-10 text-center">
 
-                <img src={Logo} alt="logo" className="w-44 mx-auto mb-6" />
 
                 <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
 
