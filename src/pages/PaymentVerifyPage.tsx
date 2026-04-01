@@ -17,7 +17,7 @@ const PaymentVerifyPage = () => {
     const [status, setStatus] = useState<Status>("verifying");
     const [ticket, setTicket] = useState<any>(null);
     const [downloading, setDownloading] = useState(false);
-    const [countdown, setCountdown] = useState(5);
+    const [countdown, setCountdown] = useState(10);
 
     /* ================= PAYMENT STATUS POLLING ================= */
     useEffect(() => {

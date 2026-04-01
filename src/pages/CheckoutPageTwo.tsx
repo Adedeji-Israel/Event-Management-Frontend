@@ -24,8 +24,8 @@ interface Attendee {
 const CheckoutPageTwo = () => {
     const { eventId } = useParams();
     const navigate = useNavigate();
-    const { user } = useAuth(); 
-    
+    const { user } = useAuth();
+
     const [event, setEvent] = useState<Event | null>(null);
     const [selectedTickets, setSelectedTickets] = useState<SelectedTicket[]>([]);
     const [billing, setBilling] = useState({
@@ -110,7 +110,7 @@ const CheckoutPageTwo = () => {
 
     // ================= PROCEED =================
     const handleProceed = async () => {
-        if (isSubmitting) return; // 🚨 HARD STOP (prevents double click)
+        if (isSubmitting) return;
 
         const emptyAttendee = attendees.find(a => !a.name);
         if (emptyAttendee) {
@@ -127,13 +127,19 @@ const CheckoutPageTwo = () => {
                 attendees,
             });
 
-            setTimeout(() => {
-                window.location.href = res.data.authorizationUrl;
-            }, 1500);
+            const url = res.data?.authorizationUrl;
+
+            if (!url) {
+                throw new Error("No payment link returned");
+            }
+
+            // 🚀 Redirect immediately (NO TIMEOUT)
+            window.location.href = url;
 
         } catch (error: any) {
+            console.error(error);
             toast.error(error.response?.data?.message || "Booking failed");
-            setIsSubmitting(false); // Unlock if failed
+            setIsSubmitting(false);
         }
     };
 
