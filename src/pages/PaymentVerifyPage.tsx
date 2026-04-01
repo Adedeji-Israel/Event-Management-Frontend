@@ -171,76 +171,84 @@ const PaymentVerifyPage = () => {
     /* ================= SUCCESS ================= */
     return (
         <div
-            className="w-full min-h-screen flex items-center justify-center bg-cover bg-center p-6"
+            className="w-full min-h-screen py-10 bg-gray-100 bg-cover bg-center bg-no-repeat shadow-xl animate-fade-in"
             style={{ backgroundImage: `url(${BackgroundImage})` }}
         >
-            <img src={Logo} alt="logo" className="w-60 mx-auto mb-2" />
+            <div className="flex flex-col items-center w-full">
 
-            <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-10 text-center">
+                {/* Logo */}
+                <img src={Logo} alt="logo" className="w-60 mb-5" />
 
+                {/* Success Card (Login Style) */}
+                <div className="w-[90%] max-w-md bg-white backdrop-blur-md p-8 rounded-lg shadow-xl text-center">
 
-                <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                    {/* Icon */}
+                    <CheckCircle2 className="w-14 h-14 text-green-500 mx-auto mb-4 drop-shadow-lg" />
 
-                <h2 className="text-2xl font-bold text-[#4B22A6]">
-                    Payment Successful
-                </h2>
+                    {/* Title */}
+                    <h2 className="text-2xl font-bold text-[#4B22A6]">
+                        Payment Successful
+                    </h2>
 
-                <p className="text-gray-600 mt-2">
-                    Your tickets have been confirmed and sent to your email.
-                </p>
+                    {/* Message */}
+                    <p className="text-gray-600 mt-2">
+                        Your tickets have been confirmed and sent to your email.
+                    </p>
 
-                <p className="mt-1 font-semibold text-[#4B22A6] bg-purple-50 inline-block px-3 py-1 rounded-md">
-                    {ticket?.email}
-                </p>
+                    {/* Email */}
+                    <p className="mt-3 text-sm font-semibold text-[#4B22A6] bg-purple-50 inline-block px-3 py-1 rounded-md">
+                        {ticket?.email}
+                    </p>
 
-                {/* EVENT INFO */}
+                    {/* EVENT INFO */}
+                    {ticket?.event && (
+                        <div className="mt-6 bg-gray-50 rounded-lg p-4 text-left">
+                            <h3 className="font-semibold text-lg text-purple-600">
+                                {ticket.event.title}
+                            </h3>
 
-                {ticket?.event && (
-                    <div className="mt-6 bg-gray-50 rounded-lg p-4">
+                            <p className="text-gray-500 text-sm mt-1">
+                                {new Date(ticket.event.date).toLocaleDateString()} •{" "}
+                                {ticket.event.location}
+                            </p>
+                        </div>
+                    )}
 
-                        <h3 className="font-semibold text-lg text-purple-600">
-                            {ticket.event.title}
-                        </h3>
+                    {/* ACTION BUTTONS */}
+                    <div className="mt-6 space-y-3">
 
-                        <p className="text-gray-500 text-sm mt-1">
-                            {new Date(ticket.event.date).toLocaleDateString()} •{" "}
-                            {ticket.event.location}
-                        </p>
+                        <button
+                            onClick={handleDownloadPDF}
+                            disabled={downloading}
+                            className="w-full bg-[#4B22A7] hover:bg-[#3D1C88] text-white py-2 rounded-sm font-semibold transition disabled:bg-[#9A84D6]"
+                        >
+                            {downloading ? "Generating Ticket..." : "Download Ticket"}
+                        </button>
 
+                        <button
+                            onClick={() => navigate("/dashboard/attendee/my-tickets")}
+                            className="w-full border border-[#4B22A7] text-[#4B22A7] py-2 rounded-sm font-semibold hover:bg-purple-50 transition"
+                        >
+                            View My Tickets
+                        </button>
                     </div>
-                )}
 
-                {/* ACTION BUTTONS */}
+                    {/* Footer Text */}
+                    <p className="text-sm text-gray-500 mt-5">
+                        Redirecting to dashboard in {countdown}s...
+                    </p>
 
-                <div className="mt-8 space-y-3">
-
-                    <button
-                        onClick={handleDownloadPDF}
-                        disabled={downloading}
-                        className="w-full bg-[#4B22A7] text-white py-3 rounded-md font-semibold hover:opacity-90 transition"
-                    >
-                        {downloading ? "Generating Ticket..." : "Download Ticket"}
-                    </button>
-
-                    <button
-                        onClick={() => navigate("/dashboard/attendee/my-tickets")}
-                        className="w-full border border-[#4B22A7] text-[#4B22A7] py-3 rounded-md font-semibold hover:bg-purple-50 transition"
-                    >
-                        View My Tickets
-                    </button>
+                    <p className="text-xs text-gray-500 mt-2">
+                        Check spam/promotions if you don’t see your ticket.
+                    </p>
 
                 </div>
-
-                <p className="text-sm text-gray-500 mt-6">
-                    Redirecting to dashboard in {countdown}s...
-                </p>
-
-                <p className="text-xs text-gray-500 mt-2">
-                    If you don’t see it, check your spam or promotions folder.
-                </p>
             </div>
         </div>
     );
 };
 
 export default PaymentVerifyPage;
+
+// https://eventplace-sable.vercel.app/events/payment/verify?trxref=r0le61d4d9&reference=r0le61d4d9 
+// http://localhost:5174/events/payment/verify?trxref=r0le61d4d9&reference=r0le61d4d9

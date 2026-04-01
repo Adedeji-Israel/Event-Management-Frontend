@@ -171,6 +171,3 @@ const Login = () => {
 };
 
 export default Login;
-
-// http://localhost:5174/events/payment/verify?trxref=pxmegwc9ly&reference=pxmegwc9ly
-// http://localhost:5174/events/payment/verify?trxref=u1o2wpiasu&reference=u1o2wpiasu 
