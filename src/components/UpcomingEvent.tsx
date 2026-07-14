@@ -1,4 +1,3 @@
-// import React from 'react'
 import { Button } from "@/components/ui/button"
 import { MoveRight } from "lucide-react"
 import EventsGrid from "@/components/EventGrid"
@@ -21,7 +20,7 @@ const UpcomingEvent = () => {
                     <Button asChild variant="ghost" className="text-[#36358F] text-lg font-bold rounded-sm border-2 border-[#36358F] hover:text-white hover:bg-[#36358F] transition-colors duration-600 !px-6 !py-6">
                         <Link to="/all-events/" className="flex items-center gap-3">
                             SEE MORE EVENT
-                            <MoveRight /> 
+                            <MoveRight />
                         </Link>
                     </Button>
                 </div>

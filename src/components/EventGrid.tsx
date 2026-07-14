@@ -14,12 +14,12 @@ const EventsGrid = ({ showAll = false }) => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        
+
         const eventsRes = await api.get("/events");
 
         setEvents(eventsRes.data.events);
       } catch (error: any) {
-        setError(error); 
+        setError(error);
       } finally {
         setLoading(false);
       }
@@ -37,7 +37,7 @@ const EventsGrid = ({ showAll = false }) => {
 
 
   return (
-    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 card-grid items-stretch">
+    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 card-grid items-stretch">
       {(showAll ? events : events.slice(0, 6)).map((event) => (
         <EventCard key={event._id} {...event} id={event._id} />
       ))}
