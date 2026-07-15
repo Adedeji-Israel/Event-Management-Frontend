@@ -1,16 +1,20 @@
-// src/Context/AuthContext.tsx
 import { createContext, useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "@/lib/AxiosInterceptor";
+import api, { setAccessToken } from "@/lib/AxiosInterceptor";
 import type { User } from "@/types/user";
 
+export interface ApiResponse {
+  status: "success" | "error";
+  message: string;
+}
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
   signup: (formData: FormData) => Promise<string>;
   login: (formData: { email: string; password: string }) => Promise<User>;
   logout: () => Promise<void>;
+  forgotPassword: (email: string) => Promise<ApiResponse>;
+  resetPassword: (token: string, newPassword: string) => Promise<ApiResponse>;
   submitting: boolean;
   loading: boolean;
 }
@@ -25,15 +29,12 @@ const AuthProvider = ({ children }: Props) => {
   const navigate = useNavigate();
 
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const clearAuthData = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem("user"); // UI cache only — not a credential
     setUser(null);
-    setToken(null);
   };
 
   // SIGNUP
@@ -43,12 +44,10 @@ const AuthProvider = ({ children }: Props) => {
       const { data } = await api.post("/auth/signup", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
       if (data.status !== "success") throw new Error(data.message);
-
       return data.message;
     } catch (err: any) {
-      throw new Error(err.message); // ✅ CLEAN
+      throw new Error(err.message);
     } finally {
       setSubmitting(false);
     }
@@ -62,55 +61,74 @@ const AuthProvider = ({ children }: Props) => {
       if (data.status !== "success") throw new Error(data.message);
 
       const userData = data.data.user;
-      const userToken = data.data.token;
-
+      setAccessToken(data.data.token);
       localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("token", userToken);
-
       setUser(userData);
-      setToken(userToken);
 
       return userData;
     } catch (err: any) {
+      setAccessToken(null);
       clearAuthData();
-      throw new Error(err.message); // ✅ CLEAN
+      throw new Error(err.message);
     } finally {
       setSubmitting(false);
     }
   };
 
-  // LOGOUT 
+  // LOGOUT
   const logout = async () => {
     try {
       await api.post("/auth/logout");
     } catch (error) {
       console.warn("Logout failed on server");
     } finally {
+      setAccessToken(null);
       clearAuthData();
-
-      // ✅ GLOBAL FLAG
       sessionStorage.setItem("justLoggedOut", "true");
-
       navigate("/auth/login", { replace: true });
     }
   };
 
-  // Restore session
+  // FORGOT PASSWORD
+  const forgotPassword = async (email: string): Promise<ApiResponse> => {
+    setSubmitting(true);
+    try {
+      const { data } = await api.post<ApiResponse>("/auth/forgot-password", { email });
+      if (data.status !== "success") throw new Error(data.message);
+      return data;
+    } catch (err: any) {
+      throw new Error(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // RESET PASSWORD
+  const resetPassword = async (token: string, newPassword: string): Promise<ApiResponse> => {
+    setSubmitting(true);
+    try {
+      const { data } = await api.patch<ApiResponse>(`/auth/reset-password/${token}`, {
+        newPassword,
+      });
+      if (data.status !== "success") throw new Error(data.message);
+      return data;
+    } catch (err: any) {
+      throw new Error(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // RESTORE SESSION — via the refresh cookie, not localStorage
   useEffect(() => {
     const initAuth = async () => {
-      const storedToken = localStorage.getItem("token");
-      const storedUser = localStorage.getItem("user");
-
-      if (!storedToken || !storedUser) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        setToken(storedToken);
-        const res = await api.get("/auth/me");
-        setUser(res.data.data.user);
+        const { data } = await api.post("/auth/refresh");
+        setAccessToken(data.data.token);
+        setUser(data.data.user);
+        localStorage.setItem("user", JSON.stringify(data.data.user));
       } catch {
+        setAccessToken(null);
         clearAuthData();
       } finally {
         setLoading(false);
@@ -122,7 +140,7 @@ const AuthProvider = ({ children }: Props) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, signup, login, logout, submitting, loading }}
+      value={{ user, signup, login, logout, forgotPassword, resetPassword, submitting, loading }}
     >
       {children}
     </AuthContext.Provider>

@@ -82,6 +82,7 @@ const Login = () => {
       }
 
     } catch (error: any) {
+      reset();
       toastError(error.message);
     }
   };

@@ -7,6 +7,7 @@ import Signup from "@/pages/Signup"
 import Login from '@/pages/Login'
 import VerifyAccount from '@/pages/VerifyAccount';
 import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
 import AllEvents from '@/pages/AllEvents';
 import NotFoundPage from '@/pages/NotFoundPage';
 
@@ -43,6 +44,7 @@ function App() {
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/verify-account/:verificationToken" element={<VerifyAccount />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth/reset-password/:resetPasswordToken" element={<ResetPassword />} />
         <Route path="/events/:eventId" element={<SingleEvent />} />
         <Route path="/all-events" element={<AllEvents />} />
 
