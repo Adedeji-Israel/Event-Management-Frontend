@@ -4,7 +4,7 @@ import api from "@/lib/AxiosInterceptor";
 import EditEventModal from "@/components/modals/EditEventModal";
 import { Eye, Pencil, Trash2, CalendarDays, MapPin } from "lucide-react";
 import type { Event } from "@/types/event";
-import { toastSuccess } from "@/utils/toast";
+import { toastSuccess, toastError } from "@/utils/toast";
 import ConfirmModal from "@/components/modals/ConfirmModal";
 
 const OrganizerEvents = () => {
@@ -56,8 +56,13 @@ const OrganizerEvents = () => {
 
       setDeleteModal(false);
       setSelectedEventId(null);
-
+    } catch (err: any) {
+      toastError(
+        err?.message || "Failed to delete event. Please try again."
+      );
+      console.error("Delete Event Error:", err);
     } finally {
+      setDeleteModal(false);
       setDeleting(false);
     }
   };
@@ -177,7 +182,7 @@ const OrganizerEvents = () => {
                 <div className="flex gap-2 pt-3 border-t">
                   {/* VIEW */}
                   <Link to={`/events/${event._id}`} className="flex-1">
-                    <button className="w-full flex items-center justify-center gap-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 py-2 rounded-lg transition">
+                    <button className="w-full flex items-center justify-center gap-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 py-2 rounded-lg transition cursor-pointer">
                       <Eye size={16} />
                       View
                     </button>
@@ -189,7 +194,7 @@ const OrganizerEvents = () => {
                       setSelectedEvent(event);
                       setShowModal(true);
                     }}
-                    className="flex-1 flex items-center justify-center gap-1 text-sm bg-purple-50 text-purple-600 hover:bg-purple-100 py-2 rounded-lg transition"
+                    className="flex-1 flex items-center justify-center gap-1 text-sm bg-purple-50 text-purple-600 hover:bg-purple-100 py-2 rounded-lg transition cursor-pointer"
                   >
                     <Pencil size={16} />
                     Edit
@@ -201,7 +206,7 @@ const OrganizerEvents = () => {
                       setSelectedEventId(event._id);
                       setDeleteModal(true);
                     }}
-                    className="flex-1 flex items-center justify-center gap-1 text-sm bg-red-50 text-red-600 hover:bg-red-100 py-2 rounded-lg transition"
+                    className="flex-1 flex items-center justify-center gap-1 text-sm bg-red-50 text-red-600 hover:bg-red-100 py-2 rounded-lg transition cursor-pointer"
                   >
                     <Trash2 size={16} />
                     Delete

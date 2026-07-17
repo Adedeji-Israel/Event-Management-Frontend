@@ -17,6 +17,7 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import DashboardHome from '@/pages/admin/DashboardHome';
 import AdminEvents from '@/pages/admin/AdminEvents';
 import SingleEvent from '@/pages/SingleEvent';
+import OrganizerRequests from './pages/admin/OrganizerRequests';
 
 import OrganizerDashboard from '@/pages/organizer/OrganizerDashboard';
 import OrganizerEvents from '@/pages/organizer/OrganizerEvents';
@@ -28,6 +29,7 @@ import AttendeeEvents from '@/pages/attendee/AttendeeEvents';
 import AttendeeTickets from '@/pages/attendee/AttendeeTickets';
 import UpcomingEvents from '@/pages/attendee/UpcomingEvents';
 import PastEvents from '@/pages/attendee/PastEvents';
+import OrganizerRequest from './pages/attendee/OrganizerRequest';
 
 import CheckoutPageOne from '@/pages/CheckoutPageOne';
 import CheckoutPageTwo from '@/pages/CheckoutPageTwo';
@@ -59,7 +61,8 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
             <Route path="admin" element={<DashboardHome />} />
             <Route path="admin/events" element={<AdminEvents />} />
-            <Route path="events/:eventId" element={<SingleEvent />} />
+            <Route path="admin/events/:eventId" element={<SingleEvent />} />
+            <Route path="admin/organizer-requests" element={<OrganizerRequests />} />
           </Route>
 
           {/* ORGANIZER */}
@@ -77,6 +80,7 @@ function App() {
             <Route path="attendee/events/upcoming" element={<UpcomingEvents />} />
             <Route path="attendee/events/past" element={<PastEvents />} />
             <Route path="attendee/my-tickets" element={<AttendeeTickets />} />
+            <Route path="attendee/organizer-request" element={<OrganizerRequest />} />
           </Route>
         </Route>
 

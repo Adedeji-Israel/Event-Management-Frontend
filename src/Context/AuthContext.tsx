@@ -15,6 +15,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<ApiResponse>;
   resetPassword: (token: string, newPassword: string) => Promise<ApiResponse>;
+  refreshUser: () => Promise<void>; 
   submitting: boolean;
   loading: boolean;
 }
@@ -31,6 +32,20 @@ const AuthProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // REFRESH USER — re-pulls the latest user doc (e.g. after organizerRequest changes)
+  const refreshUser = async () => {
+    try {
+      const { data } = await api.post("/auth/refresh");
+      setAccessToken(data.data.token);
+      setUser(data.data.user);
+      localStorage.setItem("user", JSON.stringify(data.data.user));
+    } catch (err) {
+      // If the refresh fails here, session is likely dead — let the next
+      // protected request/interceptor handle logout, don't force it here.
+      console.warn("Failed to refresh user", err);
+    }
+  };
 
   const clearAuthData = () => {
     localStorage.removeItem("user"); // UI cache only — not a credential
@@ -123,6 +138,7 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
+        await refreshUser(); // This will set user and accessToken if valid
         const { data } = await api.post("/auth/refresh");
         setAccessToken(data.data.token);
         setUser(data.data.user);
@@ -140,7 +156,7 @@ const AuthProvider = ({ children }: Props) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, signup, login, logout, forgotPassword, resetPassword, submitting, loading }}
+      value={{ user, signup, login, logout, forgotPassword, resetPassword, refreshUser, submitting, loading }}
     >
       {children}
     </AuthContext.Provider>
