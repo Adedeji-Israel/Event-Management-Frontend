@@ -80,8 +80,12 @@ function App() {
             <Route path="attendee/events/upcoming" element={<UpcomingEvents />} />
             <Route path="attendee/events/past" element={<PastEvents />} />
             <Route path="attendee/my-tickets" element={<AttendeeTickets />} />
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={["user", "organizer"]} />}>
             <Route path="attendee/organizer-request" element={<OrganizerRequest />} />
           </Route>
+
         </Route>
 
         {/* Catch Unknown Routes */}

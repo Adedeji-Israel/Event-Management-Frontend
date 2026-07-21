@@ -42,14 +42,25 @@ const OrganizerRequest = () => {
     }, [status]);
 
     // React the moment status flips to approved
+    const [countdown, setCountdown] = useState(3);
+
     useEffect(() => {
         if (status === "approved") {
             stopPolling();
             setJustApproved(true);
-            const timer = setTimeout(() => {
+
+            const countdownInterval = setInterval(() => {
+                setCountdown(prev => prev - 1);
+            }, 1000);
+
+            const redirectTimer = setTimeout(() => {
                 navigate("/dashboard/organizer", { replace: true });
-            }, 2000);
-            return () => clearTimeout(timer);
+            }, 3000);
+
+            return () => {
+                clearInterval(countdownInterval);
+                clearTimeout(redirectTimer);
+            };
         }
     }, [status, navigate]);
 
@@ -72,8 +83,12 @@ const OrganizerRequest = () => {
                 <div className="bg-white border border-gray-200 rounded-lg p-6 flex items-center gap-3">
                     <CheckCircle2 className="text-green-600" size={24} />
                     <div>
-                        <p className="font-semibold text-gray-900">You're approved!</p>
-                        <p className="text-sm text-gray-500">Taking you to your organizer dashboard...</p>
+                        <p className="font-semibold text-gray-900">
+                            🎉 Congratulations! Your organizer request has been approved.
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            Redirecting you to your Organizer Dashboard in {countdown}...
+                        </p>
                     </div>
                 </div>
             </div>

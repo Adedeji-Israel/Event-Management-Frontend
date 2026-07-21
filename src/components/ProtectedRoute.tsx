@@ -12,42 +12,35 @@ const ProtectedRoute = ({ allowedRoles }: Props) => {
   const location = useLocation();
 
   const hasShownToast = useRef(false);
-
-  // ✅ READ GLOBAL LOGOUT FLAG
-  const justLoggedOut = sessionStorage.getItem("justLoggedOut") === "true";
+  const lastPathname = useRef(location.pathname);
 
   useEffect(() => {
-    if (loading) return;
+    // Reset the guard first, in the SAME effect, so there's no
+    // ordering race with a separate pathname-watching effect.
+    if (lastPathname.current !== location.pathname) {
+      hasShownToast.current = false;
+      lastPathname.current = location.pathname;
+    }
 
-    // ✅ HARD BLOCK: prevent login toast after logout
+    if (loading || hasShownToast.current) return;
+
+    const justLoggedOut = sessionStorage.getItem("justLoggedOut") === "true";
     if (justLoggedOut) {
-      sessionStorage.removeItem("justLoggedOut"); // cleanup
+      sessionStorage.removeItem("justLoggedOut");
       return;
     }
 
-    // 🔐 NOT LOGGED IN
-    if (!user && !hasShownToast.current) {
+    if (!user) {
       toastInfo("Please login to continue");
       hasShownToast.current = true;
       return;
     }
 
-    // 🔐 ROLE NOT ALLOWED
-    if (
-      user &&
-      allowedRoles &&
-      !allowedRoles.includes(user.role) &&
-      !hasShownToast.current
-    ) {
+    if (allowedRoles && !allowedRoles.includes(user.role)) {
       toastInfo("You are not authorized to access this page!");
       hasShownToast.current = true;
     }
-  }, [user, loading, allowedRoles, justLoggedOut]);
-
-  // 🔄 Reset control
-  useEffect(() => {
-    hasShownToast.current = false;
-  }, [location.pathname]);
+  }, [user, loading, allowedRoles, location.pathname]);
 
   if (loading) return null;
 

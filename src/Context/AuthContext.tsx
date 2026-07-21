@@ -15,7 +15,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<ApiResponse>;
   resetPassword: (token: string, newPassword: string) => Promise<ApiResponse>;
-  refreshUser: () => Promise<void>; 
+  refreshUser: () => Promise<boolean>;
   submitting: boolean;
   loading: boolean;
 }
@@ -34,16 +34,16 @@ const AuthProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true);
 
   // REFRESH USER — re-pulls the latest user doc (e.g. after organizerRequest changes)
-  const refreshUser = async () => {
+  const refreshUser = async (): Promise<boolean> => {
     try {
       const { data } = await api.post("/auth/refresh");
       setAccessToken(data.data.token);
       setUser(data.data.user);
       localStorage.setItem("user", JSON.stringify(data.data.user));
+      return true;
     } catch (err) {
-      // If the refresh fails here, session is likely dead — let the next
-      // protected request/interceptor handle logout, don't force it here.
       console.warn("Failed to refresh user", err);
+      return false;
     }
   };
 
@@ -137,18 +137,12 @@ const AuthProvider = ({ children }: Props) => {
   // RESTORE SESSION — via the refresh cookie, not localStorage
   useEffect(() => {
     const initAuth = async () => {
-      try {
-        await refreshUser(); // This will set user and accessToken if valid
-        const { data } = await api.post("/auth/refresh");
-        setAccessToken(data.data.token);
-        setUser(data.data.user);
-        localStorage.setItem("user", JSON.stringify(data.data.user));
-      } catch {
+      const ok = await refreshUser();
+      if (!ok) {
         setAccessToken(null);
         clearAuthData();
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
     initAuth();
